@@ -5,6 +5,7 @@
     <select v-model="selectedCountry">
       <option v-for="country in countries" v-bind:value="country.value"> {{country.name}} </option>
     </select>
+    <spinner v-show="loading"></spinner>
     <ul>
       <!-- <li v-bind:key="artist" v-for="artist in artists" >{{ artist.name }}</li> -->
       <artist v-for="artist in artists" 
@@ -14,8 +15,9 @@
 </template>
 
 <script>
-import Artist from './components/Artist'
+import Artist from './components/Artist.vue'
 import getArtists from './api'
+import Spinner from './components/Spinner.vue'
 
 export default {
   name: 'app',
@@ -27,18 +29,23 @@ export default {
         { name: 'Argentina', value: 'argentina' },
         { name: 'España', value: 'spain' }
       ],
-      selectedCountry: 'argentina'
+      selectedCountry: 'argentina',
+      loading: true
     }
   },
   components: {
-    Artist: Artist
+    Artist: Artist,
+    Spinner
   },
   methods:{
     refreshArtist(){
       const self = this;
+      this.loading = true;
+      this.artists = [];
       getArtists(this.selectedCountry)
       .then( function (artists){
       self.artists = artists;
+      self.loading = false;
       });
     }
   },
